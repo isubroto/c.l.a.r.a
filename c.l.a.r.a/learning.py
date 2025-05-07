@@ -7,7 +7,9 @@ from collections import defaultdict
 class JarvisLearning:
     def __init__(self):
         self.learning_file = "jarvis_learning.json"
-        self.learned_data = self.load_learning_data()
+        self.conversation_file = "jarvis_conversations.json"
+        self.learned_responses = self._load_learned_responses()
+        self.conversations = self._load_conversations()
         self.emotion_patterns = {
             'happy': ['good', 'great', 'excellent', 'wonderful', 'amazing', 'love', 'happy'],
             'sad': ['sad', 'bad', 'terrible', 'awful', 'sorry', 'unfortunate', 'upset'],
@@ -21,27 +23,76 @@ class JarvisLearning:
             'proactivity': 0.5 # 0-1 scale, higher means more proactive
         }
         
-    def load_learning_data(self):
+    def _load_learned_responses(self):
         if os.path.exists(self.learning_file):
-            with open(self.learning_file, 'r') as f:
-                return json.load(f)
-        return {
-            "command_patterns": {},
-            "user_preferences": {},
-            "conversation_history": [],
-            "learned_responses": {},
-            "user_personality": {},
-            "interaction_style": {},
-            "emotional_context": [],
-            "daily_patterns": defaultdict(list),
-            "user_mood_history": [],
-            "personalized_greetings": [],
-            "conversation_topics": defaultdict(int)
-        }
+            try:
+                with open(self.learning_file, 'r') as f:
+                    return json.load(f)
+            except json.JSONDecodeError:
+                return {}
+        return {}
     
-    def save_learning_data(self):
+    def _load_conversations(self):
+        if os.path.exists(self.conversation_file):
+            try:
+                with open(self.conversation_file, 'r') as f:
+                    return json.load(f)
+            except json.JSONDecodeError:
+                return []
+        return []
+    
+    def _save_learned_responses(self):
         with open(self.learning_file, 'w') as f:
-            json.dump(self.learned_data, f, indent=4)
+            json.dump(self.learned_responses, f, indent=4)
+    
+    def _save_conversations(self):
+        with open(self.conversation_file, 'w') as f:
+            json.dump(self.conversations, f, indent=4)
+    
+    def learn_command(self, query, response):
+        """Learn a new command-response pair"""
+        query = query.lower().strip()
+        if query not in self.learned_responses:
+            self.learned_responses[query] = {
+                'response': response,
+                'learned_at': datetime.now().isoformat(),
+                'usage_count': 1
+            }
+        else:
+            self.learned_responses[query]['usage_count'] += 1
+        self._save_learned_responses()
+    
+    def get_learned_response(self, query):
+        """Get a learned response for a query if it exists"""
+        query = query.lower().strip()
+        return self.learned_responses.get(query, {}).get('response')
+    
+    def store_conversation(self, query, response):
+        """Store a conversation for future learning"""
+        conversation = {
+            'query': query,
+            'response': response,
+            'timestamp': datetime.now().isoformat()
+        }
+        self.conversations.append(conversation)
+        self._save_conversations()
+    
+    def get_conversation_history(self, limit=10):
+        """Get recent conversation history"""
+        return self.conversations[-limit:]
+    
+    def analyze_conversation_patterns(self):
+        """Analyze conversation patterns for learning opportunities"""
+        # This is a placeholder for more sophisticated pattern analysis
+        # In the future, this could use NLP or machine learning
+        patterns = {}
+        for conv in self.conversations:
+            query = conv['query'].lower()
+            if query not in patterns:
+                patterns[query] = 1
+            else:
+                patterns[query] += 1
+        return patterns
     
     def detect_emotion(self, text):
         """Detect emotion in user's text"""
@@ -67,133 +118,46 @@ class JarvisLearning:
             self.personality_traits['formality'] = min(1.0, self.personality_traits['formality'] + 0.1)
             self.personality_traits['proactivity'] = max(0.0, self.personality_traits['proactivity'] - 0.05)
     
-    def learn_command(self, command, response):
-        """Learn new command patterns and their responses with emotional context"""
-        emotion = self.detect_emotion(command)
-        current_time = datetime.now()
-        time_of_day = current_time.strftime("%H:%M")
-        
-        if command not in self.learned_data["command_patterns"]:
-            self.learned_data["command_patterns"][command] = {
-                "response": response,
-                "count": 1,
-                "last_used": current_time.strftime("%Y-%m-%d %H:%M:%S"),
-                "emotions": {emotion: 1},
-                "time_patterns": {time_of_day: 1}
-            }
-        else:
-            self.learned_data["command_patterns"][command]["count"] += 1
-            self.learned_data["command_patterns"][command]["last_used"] = current_time.strftime("%Y-%m-%d %H:%M:%S")
-            self.learned_data["command_patterns"][command]["emotions"][emotion] = \
-                self.learned_data["command_patterns"][command]["emotions"].get(emotion, 0) + 1
-            self.learned_data["command_patterns"][command]["time_patterns"][time_of_day] = \
-                self.learned_data["command_patterns"][command]["time_patterns"].get(time_of_day, 0) + 1
-        
-        self.adapt_personality(emotion)
-        self.save_learning_data()
-    
-    def generate_personalized_response(self, command, base_response):
-        """Generate a personalized response based on learned patterns and personality"""
-        emotion = self.detect_emotion(command)
-        current_time = datetime.now()
-        time_of_day = current_time.strftime("%H:%M")
-        
-        # Add time-based greeting
-        if 5 <= current_time.hour < 12:
-            greeting = "Good morning"
-        elif 12 <= current_time.hour < 17:
-            greeting = "Good afternoon"
-        else:
-            greeting = "Good evening"
-        
-        # Add personality-based modifiers
-        if self.personality_traits['humor'] > 0.7 and random.random() < 0.3:
-            base_response += " 😊"
-        
-        if self.personality_traits['empathy'] > 0.7 and emotion in ['sad', 'angry']:
-            base_response = f"I understand. {base_response}"
-        
-        if self.personality_traits['formality'] > 0.7:
-            base_response = f"{greeting}, sir. {base_response}"
-        else:
-            base_response = f"{greeting}! {base_response}"
-        
-        return base_response
-    
     def learn_preference(self, category, preference):
         """Learn user preferences with context"""
-        if category not in self.learned_data["user_preferences"]:
-            self.learned_data["user_preferences"][category] = []
-        if preference not in self.learned_data["user_preferences"][category]:
-            self.learned_data["user_preferences"][category].append({
+        if category not in self.learned_responses:
+            self.learned_responses[category] = []
+        if preference not in self.learned_responses[category]:
+            self.learned_responses[category].append({
                 "value": preference,
                 "learned_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "context": self.get_current_context()
             })
-        self.save_learning_data()
+        self._save_learned_responses()
     
     def get_current_context(self):
         """Get current interaction context"""
         return {
             "time": datetime.now().strftime("%H:%M"),
             "day": datetime.now().strftime("%A"),
-            "mood": self.detect_emotion(self.learned_data["conversation_history"][-1]["user_input"]) if self.learned_data["conversation_history"] else "neutral"
+            "mood": self.detect_emotion(self.conversations[-1]["query"]) if self.conversations else "neutral"
         }
-    
-    def store_conversation(self, user_input, response):
-        """Store conversation history with emotional and contextual data"""
-        emotion = self.detect_emotion(user_input)
-        context = self.get_current_context()
-        
-        self.learned_data["conversation_history"].append({
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "user_input": user_input,
-            "response": response,
-            "emotion": emotion,
-            "context": context
-        })
-        
-        # Update daily patterns
-        self.learned_data["daily_patterns"][context["day"]].append({
-            "time": context["time"],
-            "emotion": emotion,
-            "command": user_input
-        })
-        
-        # Keep only last 100 conversations
-        if len(self.learned_data["conversation_history"]) > 100:
-            self.learned_data["conversation_history"] = self.learned_data["conversation_history"][-100:]
-        
-        self.save_learning_data()
-    
-    def get_learned_response(self, command):
-        """Get learned response with personalization"""
-        base_response = self.learned_data["command_patterns"].get(command, {}).get("response")
-        if base_response:
-            return self.generate_personalized_response(command, base_response)
-        return None
     
     def analyze_patterns(self):
         """Analyze command patterns with emotional and temporal context"""
-        patterns = self.learned_data["command_patterns"]
+        patterns = self.learned_responses
         analysis = {
-            "most_used_commands": sorted(patterns.items(), key=lambda x: x[1]["count"], reverse=True),
+            "most_used_commands": sorted(patterns.items(), key=lambda x: x[1]["usage_count"], reverse=True),
             "emotional_patterns": defaultdict(int),
             "time_patterns": defaultdict(int),
             "user_mood_trends": self.analyze_mood_trends()
         }
         
-        for command_data in patterns.values():
-            for emotion, count in command_data["emotions"].items():
-                analysis["emotional_patterns"][emotion] += count
-            for time, count in command_data["time_patterns"].items():
-                analysis["time_patterns"][time] += count
+        for command, data in patterns.items():
+            emotion = self.detect_emotion(command)
+            analysis["emotional_patterns"][emotion] += data["usage_count"]
+            analysis["time_patterns"][data["learned_at"][:10]] += data["usage_count"]
         
         return analysis
     
     def analyze_mood_trends(self):
         """Analyze user mood trends over time"""
-        moods = [entry["emotion"] for entry in self.learned_data["conversation_history"]]
+        moods = [self.detect_emotion(conv['query']) for conv in self.conversations]
         return {
             "overall_mood": max(set(moods), key=moods.count) if moods else "neutral",
             "mood_changes": len(set(moods)),
@@ -202,17 +166,13 @@ class JarvisLearning:
     
     def get_user_preferences(self, category):
         """Get user preferences with context"""
-        return self.learned_data["user_preferences"].get(category, [])
-    
-    def get_recent_conversations(self, limit=10):
-        """Get recent conversations with emotional context"""
-        return self.learned_data["conversation_history"][-limit:]
+        return self.learned_responses.get(category, [])
     
     def suggest_topics(self):
         """Suggest conversation topics based on user's interests and patterns"""
         topics = defaultdict(int)
-        for conv in self.learned_data["conversation_history"]:
-            words = conv["user_input"].split()
+        for conv in self.conversations:
+            words = conv['query'].split()
             for word in words:
                 if len(word) > 3:  # Only consider significant words
                     topics[word] += 1

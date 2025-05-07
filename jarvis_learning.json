@@ -1,0 +1,77 @@
+{
+    "command_patterns": {
+        "what time is it": {
+            "response": "The current time is 21:38:52",
+            "count": 1,
+            "last_used": "2025-05-07 21:38:56",
+            "emotions": {
+                "neutral": 1
+            },
+            "time_patterns": {
+                "21:38": 1
+            }
+        }
+    },
+    "user_preferences": {},
+    "conversation_history": [
+        {
+            "timestamp": "2025-05-07 21:36:36",
+            "user_input": "what time is",
+            "response": "Command not recognized",
+            "emotion": "neutral",
+            "context": {
+                "time": "21:36",
+                "day": "Wednesday",
+                "mood": "neutral"
+            }
+        },
+        {
+            "timestamp": "2025-05-07 21:38:56",
+            "user_input": "what time is it",
+            "response": "The current time is 21:38:52",
+            "emotion": "neutral",
+            "context": {
+                "time": "21:38",
+                "day": "Wednesday",
+                "mood": "neutral"
+            }
+        },
+        {
+            "timestamp": "2025-05-07 21:38:59",
+            "user_input": "none",
+            "response": "Command not recognized",
+            "emotion": "neutral",
+            "context": {
+                "time": "21:38",
+                "day": "Wednesday",
+                "mood": "neutral"
+            }
+        }
+    ],
+    "learned_responses": {},
+    "user_personality": {},
+    "interaction_style": {},
+    "emotional_context": [],
+    "daily_patterns": {
+        "Wednesday": [
+            {
+                "time": "21:36",
+                "emotion": "neutral",
+                "command": "what time is"
+            },
+            {
+                "time": "21:38",
+                "emotion": "neutral",
+                "command": "what time is it"
+            },
+            {
+                "time": "21:38",
+                "emotion": "neutral",
+                "command": "none"
+            }
+        ]
+    },
+    "user_mood_history": [],
+    "personalized_greetings": [],
+    "conversation_topics": {}
+}
