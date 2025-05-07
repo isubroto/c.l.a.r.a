@@ -12,15 +12,22 @@ C.L.A.R.A is an advanced voice-controlled AI assistant built with Python that co
 - 🎯 Context-Aware Responses
 - 🔄 Response Caching
 - ⚡ Fast Command Processing
+- 🐳 Docker Support
+- 🔄 CI/CD Pipeline
+- 🪟 Windows Integration
+- 🐧 Linux Support
 
 ## Prerequisites
 
-- Python 3.8 or higher
-- Windows 10/11
+- Python 3.13 or higher
+- Windows 10/11 (for full system control features)
+- Linux (for Docker deployment)
 - Microphone
 - Speakers
 
 ## Installation
+
+### Local Installation
 
 1. Clone the repository:
 
@@ -35,30 +42,60 @@ cd c.l.a.r.a
 pip install -r requirements.txt
 ```
 
-3. Additional system requirements:
-
-```bash
-pip install pyttsx3 speech_recognition psutil pycaw wmi comtypes
-```
-
-## Usage
-
-1. Run the assistant:
+3. Run the assistant:
 
 ```bash
 python c.l.a.r.a/Jarvis_main.py
 ```
 
-2. Wake up the assistant using any of these phrases:
+### Docker Installation
 
-- "Wake up"
-- "Hey Jarvis"
-- "Hello Jarvis"
-- "Jarvis wake up"
-- "Are you there"
-- "Are you awake"
+1. Pull the Docker image:
 
-3. Give commands to the assistant. The assistant will respond through voice and text output.
+```bash
+docker pull ghcr.io/yourusername/clara:latest
+```
+
+2. Run the container:
+
+```bash
+docker run -it --device /dev/snd ghcr.io/yourusername/clara:latest
+```
+
+## Development
+
+### Project Structure
+
+```
+c.l.a.r.a/
+├── c.l.a.r.a/
+│   ├── Jarvis_main.py          # Main application file
+│   ├── command_handler.py      # Command processing logic
+│   ├── responses.py           # Response generation
+│   ├── learning.py           # Self-learning module
+│   ├── system_commands.py    # System control commands
+│   └── weather.py           # Weather information
+├── tests/                    # Test directory
+├── .github/
+│   └── workflows/           # GitHub Actions workflows
+├── Dockerfile               # Docker configuration
+├── requirements.txt        # Python dependencies
+└── README.md              # Project documentation
+```
+
+### Running Tests
+
+```bash
+python -m unittest discover c.l.a.r.a/tests
+```
+
+### CI/CD Pipeline
+
+The project uses GitHub Actions for continuous integration and deployment:
+
+- Windows Build and Test: Runs tests on Windows
+- Docker Build: Builds and pushes Docker images
+- Release: Creates GitHub releases with changelog
 
 ## Available Commands
 
@@ -78,7 +115,7 @@ python c.l.a.r.a/Jarvis_main.py
 - "Tell me the weather in [city]"
 - "What's the temperature in [city]"
 
-### System Commands
+### System Commands (Windows Only)
 
 #### Power Management
 
@@ -118,19 +155,6 @@ python c.l.a.r.a/Jarvis_main.py
 - "Current news"
 - "News update"
 
-## Project Structure
-
-```
-c.l.a.r.a/
-├── Jarvis_main.py          # Main application file
-├── command_handler.py      # Command processing logic
-├── responses.py           # Response generation
-├── learning.py           # Self-learning module
-├── system_commands.py    # System control commands
-├── weather.py           # Weather information
-└── requirements.txt     # Project dependencies
-```
-
 ## Configuration
 
 The assistant uses a `user_preferences.json` file to store user preferences. You can modify:
@@ -140,6 +164,22 @@ The assistant uses a `user_preferences.json` file to store user preferences. You
 - Weather location
 - News preferences
 - Voice preferences (rate and volume)
+
+## Platform Support
+
+### Windows
+
+- Full system control features
+- Audio control
+- Display control
+- System information
+
+### Linux (Docker)
+
+- Basic voice commands
+- Weather information
+- News updates
+- Learning capabilities
 
 ## Contributing
 
@@ -160,6 +200,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - psutil for system information
 - pycaw for audio control
 - wmi for Windows Management Instrumentation
+- Docker for containerization
+- GitHub Actions for CI/CD
 
 ## Support
 
