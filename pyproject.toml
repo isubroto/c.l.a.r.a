@@ -1,22 +1,116 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
-name = "c-l-a-r-a"
-version = "0.1.0"
-description = ""
-authors = [
-    {name = "Subroto Saha",email = "isubrotosaha@gmail.com"}
-]
+name = "c.l.a.r.a"
+version = "1.0.0"
+description = "Conversational Learning Assistant with Responsive Actions - A powerful voice assistant"
 readme = "README.md"
 requires-python = ">=3.13"
+license = "MIT"
+authors = [
+    { name = "isubroto", email = "isubroto@github.com" }
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Desktop Environment",
+    "Topic :: Utilities",
+]
 dependencies = [
-    "wikipedia (>=1.4.0,<2.0.0)",
-    "pyttsx3 (>=2.98,<3.0)",
-    "speechrecognition (>=3.14.2,<4.0.0)"
+    # Core dependencies
+    "pyautogui>=0.9.54",
+    "opencv-python>=4.8.0",
+    "speedtest-cli>=2.1.3",
+    "deep-translator>=1.11.4",
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.0",
+    "python-dotenv>=1.0.0",
+    "schedule>=1.2.0",
+    "pywhatkit>=5.4",
+    "pycryptodome>=3.19.0",
+    "psutil>=5.9.0",
+    "pywin32>=306; sys_platform == 'win32'",
+    
+    # Audio and Speech
+    "SpeechRecognition>=3.10.0",
+    "pyttsx3>=2.90",
+    "pyaudio>=0.2.13",
+    "sounddevice>=0.4.6",
+    "numpy>=1.24.0",
+    
+    # Web and API
+    "selenium>=4.15.0",
+    "webdriver-manager>=4.0.1",
+    "aiohttp>=3.9.0",
+    "websockets>=12.0",
+    
+    # Data and Storage
+    "pandas>=2.1.0",
+    "sqlalchemy>=2.0.0",
+    "pymongo>=4.6.0",
+    
+    # UI and Graphics
+    "pillow>=10.0.0",
+    "matplotlib>=3.8.0",
+    "tkinter; sys_platform != 'win32'",
 ]
 
-[tool.poetry]
-packages = [{include = "c", from = "src"}]
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.9.0",
+    "flake8>=6.1.0",
+    "mypy>=1.5.0",
+    "isort>=5.12.0",
+    "pre-commit>=3.5.0",
+]
 
+[project.urls]
+Homepage = "https://github.com/isubroto/c.l.a.r.a"
+Repository = "https://github.com/isubroto/c.l.a.r.a.git"
+Documentation = "https://github.com/isubroto/c.l.a.r.a#readme"
+Issues = "https://github.com/isubroto/c.l.a.r.a/issues"
 
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=c.l.a.r.a --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["c.l.a.r.a"]
+omit = ["tests/*", "setup.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "pass",
+    "raise ImportError",
+]

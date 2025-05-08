@@ -1,19 +1,48 @@
 # Core dependencies
-pyttsx3>=2.90
-SpeechRecognition>=3.10.0
-requests>=2.31.0
-python-dateutil>=2.8.2
-typing-extensions>=4.7.1
-beautifulsoup4>=4.12.2
-wikipedia>=1.4.0
-googletrans==3.1.0a0
 pyautogui>=0.9.54
 opencv-python>=4.8.0
 speedtest-cli>=2.1.3
+deep-translator>=1.11.4
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+python-dotenv>=1.0.0
+schedule>=1.2.0
+pywhatkit>=5.4
+pycryptodome>=3.19.0
+psutil>=5.9.0
+pywin32>=306; sys_platform == 'win32'
 
-# Audio dependencies
+# Audio and Speech
+SpeechRecognition>=3.10.0
+pyttsx3>=2.90
 pyaudio>=0.2.13
-psutil>=5.9.5
+sounddevice>=0.4.6
+numpy>=1.24.0
+
+# Web and API
+selenium>=4.15.0
+webdriver-manager>=4.0.1
+aiohttp>=3.9.0
+websockets>=12.0
+
+# Data and Storage
+pandas>=2.1.0
+sqlalchemy>=2.0.0
+pymongo>=4.6.0
+
+# UI and Graphics
+pillow>=10.0.0
+matplotlib>=3.8.0
+tkinter; sys_platform != 'win32'
+
+# Development dependencies
+pytest>=7.4.0
+pytest-cov>=4.1.0
+black>=23.9.0
+flake8>=6.1.0
+mypy>=1.5.0
+isort>=5.12.0
+pre-commit>=3.5.0
 
 # Windows-specific dependencies
 # These will only be installed on Windows

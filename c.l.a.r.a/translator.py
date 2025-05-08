@@ -1,11 +1,11 @@
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 from sayAndListen import SayAndListen
 
 class GoogleTranslator:
     def __init__(self):
+        """Initialize the translator with speech interface."""
         self.speech = SayAndListen()
-        self.translator = Translator()
-        self.languages = {
+        self.supported_languages = {
             'english': 'en',
             'spanish': 'es',
             'french': 'fr',
@@ -15,72 +15,85 @@ class GoogleTranslator:
             'russian': 'ru',
             'japanese': 'ja',
             'korean': 'ko',
-            'chinese': 'zh-cn',
-            'hindi': 'hi',
+            'chinese': 'zh',
             'arabic': 'ar',
-            'dutch': 'nl',
-            'greek': 'el',
-            'hebrew': 'iw',
-            'polish': 'pl',
-            'turkish': 'tr',
-            'vietnamese': 'vi',
-            'thai': 'th',
-            'swedish': 'sv'
+            'hindi': 'hi',
+            'bengali': 'bn',
+            'tamil': 'ta',
+            'telugu': 'te',
+            'kannada': 'kn',
+            'malayalam': 'ml',
+            'marathi': 'mr',
+            'gujarati': 'gu',
+            'punjabi': 'pa'
         }
     
-    def translate_text(self, text, target_lang, source_lang=None):
-        """Translate text to target language"""
+    def translate_text(self, text, target_lang='en', source_lang=None):
+        """Translate text to target language."""
         try:
-            # Convert language names to codes
-            target_code = self.languages.get(target_lang.lower(), target_lang)
-            source_code = self.languages.get(source_lang.lower(), source_lang) if source_lang else None
+            if source_lang:
+                translator = GoogleTranslator(source=source_lang, target=target_lang)
+            else:
+                translator = GoogleTranslator(target=target_lang)
             
-            # Translate text
-            translation = self.translator.translate(text, dest=target_code, src=source_code)
-            
-            return f"Translation: {translation.text}"
+            translated = translator.translate(text)
+            return translated
         except Exception as e:
-            return f"Error translating text: {str(e)}"
+            return f"Translation error: {str(e)}"
     
     def detect_language(self, text):
-        """Detect language of text"""
+        """Detect the language of the given text."""
         try:
-            detection = self.translator.detect(text)
-            return f"Detected language: {detection.lang}"
+            translator = GoogleTranslator()
+            detected = translator.detect(text)
+            return detected
         except Exception as e:
-            return f"Error detecting language: {str(e)}"
+            return f"Language detection error: {str(e)}"
     
     def list_languages(self):
-        """List supported languages"""
-        language_list = "Supported languages:\n"
-        for name, code in self.languages.items():
-            language_list += f"- {name} ({code})\n"
-        return language_list
+        """Return list of supported languages."""
+        return list(self.supported_languages.keys())
     
     def process_translator_command(self, command):
-        """Process translator-related commands"""
+        """Process translation related commands."""
         command = command.lower()
         
         if "translate" in command:
-            # Extract text and target language
             try:
-                # Remove "translate" and split into text and language
-                parts = command.replace("translate", "").strip().split(" to ", 1)
-                if len(parts) == 2:
-                    text, target_lang = parts
-                    return self.translate_text(text.strip(), target_lang.strip())
-                return "Please specify text and target language"
+                # Extract text and target language from command
+                parts = command.split("translate")
+                if len(parts) != 2:
+                    return "Please specify what to translate and to which language."
+                
+                text_part = parts[1].strip()
+                if "to" not in text_part:
+                    return "Please specify the target language using 'to'."
+                
+                text, target_lang = text_part.split("to")
+                text = text.strip()
+                target_lang = target_lang.strip()
+                
+                # Get language code
+                target_code = self.supported_languages.get(target_lang.lower())
+                if not target_code:
+                    return f"Sorry, I don't support {target_lang}. Supported languages are: {', '.join(self.list_languages())}"
+                
+                # Translate
+                translated = self.translate_text(text, target_code)
+                return f"Translation: {translated}"
+                
             except Exception as e:
-                return f"Error processing translate command: {str(e)}"
-        
+                return f"Error in translation: {str(e)}"
+                
         elif "detect language" in command:
-            # Extract text
-            text = command.replace("detect language", "").strip()
-            if text:
-                return self.detect_language(text)
-            return "Please specify text to detect language"
-        
+            try:
+                text = command.split("detect language")[1].strip()
+                detected = self.detect_language(text)
+                return f"Detected language: {detected}"
+            except Exception as e:
+                return f"Error in language detection: {str(e)}"
+                
         elif "list languages" in command:
-            return self.list_languages()
-        
-        return "I didn't understand that translator command" 
+            return f"Supported languages: {', '.join(self.list_languages())}"
+            
+        return "I can help you translate text. Just say 'translate [text] to [language]' or 'detect language [text]'." 
