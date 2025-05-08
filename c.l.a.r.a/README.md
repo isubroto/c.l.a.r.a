@@ -5,6 +5,7 @@ C.L.A.R.A is an intelligent voice-controlled personal assistant that can help yo
 ## Features
 
 - **Voice Control**: Wake up Clara by saying "Hey Clara" and give voice commands
+- **App Management**: Open and close applications using voice commands
 - **Weather Information**: Get current weather conditions for any location
 - **Web Search**: Search the web for information
 - **Temperature Conversion**: Convert temperatures between different units
@@ -52,6 +53,8 @@ python clara_main.py
 
 ### Example Commands
 
+- "Open Chrome"
+- "Close Notepad"
 - "What's the weather in London?"
 - "How's the weather outside?"
 - "Convert 32 degrees Fahrenheit to Celsius"

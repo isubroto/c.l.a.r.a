@@ -2,12 +2,14 @@ from datetime import datetime
 from responses import ResponseGenerator
 from learning import ClaraLearning
 from system_commands import SystemCommands
+from app_manager import AppManager
 
 class CommandHandler:
     def __init__(self):
         self.response_gen = ResponseGenerator()
         self.clara_learning = ClaraLearning()
         self.system_commands = SystemCommands()
+        self.app_manager = AppManager()
         
         # Convert lists to sets for O(1) lookups
         self.wake_phrases = {
@@ -104,9 +106,86 @@ class CommandHandler:
         return any(phrase in query for phrase in self.news_phrases)
     
     def process_command(self, query):
-        """Process the command and return appropriate response"""
+        """Process user command and return appropriate response"""
         query = query.lower()
         
+        # App management commands - Open variations
+        open_phrases = [
+            "open ",
+            "start ",
+            "launch ",
+            "run ",
+            "begin ",
+            "execute ",
+            "initiate ",
+            "activate ",
+            "turn on ",
+            "switch on ",
+            "power on ",
+            "boot up ",
+            "fire up ",
+            "bring up ",
+            "get ",
+            "show me ",
+            "display ",
+            "let's open ",
+            "can you open ",
+            "please open ",
+            "would you open ",
+            "could you open ",
+            "i want to open ",
+            "i need to open ",
+            "i'd like to open ",
+            "i want to start ",
+            "i need to start ",
+            "i'd like to start ",
+            "i want to launch ",
+            "i need to launch ",
+            "i'd like to launch "
+        ]
+        
+        # App management commands - Close variations
+        close_phrases = [
+            "close ",
+            "stop ",
+            "exit ",
+            "quit ",
+            "terminate ",
+            "end ",
+            "shut down ",
+            "turn off ",
+            "switch off ",
+            "power off ",
+            "kill ",
+            "shut ",
+            "let's close ",
+            "can you close ",
+            "please close ",
+            "would you close ",
+            "could you close ",
+            "i want to close ",
+            "i need to close ",
+            "i'd like to close ",
+            "i want to stop ",
+            "i need to stop ",
+            "i'd like to stop ",
+            "i want to exit ",
+            "i need to exit ",
+            "i'd like to exit "
+        ]
+        
+        # Check for open commands
+        for phrase in open_phrases:
+            if query.startswith(phrase):
+                app_name = query[len(phrase):].strip()
+                return self.app_manager.open_app(app_name), True
+                
+        # Check for close commands
+        for phrase in close_phrases:
+            if query.startswith(phrase):
+                app_name = query[len(phrase):].strip()
+                return self.app_manager.close_app(app_name), True
+            
         # Temperature commands
         temp_phrases = [
             "what is the temperature in",

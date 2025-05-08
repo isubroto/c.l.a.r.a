@@ -11,20 +11,18 @@ geocoder==1.38.1
 numpy==1.24.3
 python-dateutil==2.8.2
 pyaudio==0.2.13
-
-# Audio dependencies
-psutil>=5.9.5
+psutil==5.9.5
 
 # Windows-specific dependencies
 # These will only be installed on Windows
-pywin32>=306; sys_platform == 'win32'
-wmi>=1.5.1; sys_platform == 'win32'
-pycaw>=20230407; sys_platform == 'win32'
-comtypes>=1.2.0; sys_platform == 'win32'
+pywin32==306
+wmi==1.5.1
+pycaw==20230407
+comtypes==1.2.0
 
 # Development dependencies
-pytest>=7.4.0; extra == 'dev'
-pytest-cov>=4.1.0; extra == 'dev'
-black>=23.7.0; extra == 'dev'
-flake8>=6.1.0; extra == 'dev'
-mypy>=1.5.1; extra == 'dev' 
+pytest==7.4.0
+pytest-cov==4.1.0
+black==23.7.0
+flake8==6.1.0
+mypy==1.5.1 
