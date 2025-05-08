@@ -1,0 +1,148 @@
+name: "CodeQL Analysis"
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "30 1 * * 0" # Run weekly on Sunday at 1:30 AM UTC
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["python"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:${{ matrix.language }}"
+          upload: true
+
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { repo, owner } = context.repo;
+            const run_id = context.runId;
+            const run_url = `https://github.com/${owner}/${repo}/actions/runs/${run_id}`;
+
+            await github.rest.issues.create({
+              owner,
+              repo,
+              title: '🚨 CodeQL Analysis Failed',
+              body: `CodeQL analysis failed for run ${run_id}. Please check the [workflow run](${run_url}) for details.`
+            });
+
+      - name: Create security report
+        if: success()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { repo, owner } = context.repo;
+            const run_id = context.runId;
+            const run_url = `https://github.com/${owner}/${repo}/actions/runs/${run_id}`;
+
+            // Get CodeQL results
+            const results = await github.rest.codeScanning.listAlertsForRepo({
+              owner,
+              repo,
+              tool_name: 'CodeQL'
+            });
+
+            // Create summary
+            const summary = {
+              total: results.data.length,
+              critical: results.data.filter(r => r.rule.severity === 'critical').length,
+              high: results.data.filter(r => r.rule.severity === 'high').length,
+              medium: results.data.filter(r => r.rule.severity === 'medium').length,
+              low: results.data.filter(r => r.rule.severity === 'low').length
+            };
+
+            // Create report
+            await github.rest.issues.create({
+              owner,
+              repo,
+              title: '📊 CodeQL Security Report',
+              body: `## CodeQL Analysis Report
+                    
+                    Analysis completed successfully. [View full results](${run_url})
+                    
+                    ### Summary
+                    - Total Issues: ${summary.total}
+                    - Critical: ${summary.critical}
+                    - High: ${summary.high}
+                    - Medium: ${summary.medium}
+                    - Low: ${summary.low}
+                    
+                    Please review the results and address any security issues found.`
+            });
+
+  notify:
+    name: Notify Security Team
+    needs: analyze
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check for critical issues
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { repo, owner } = context.repo;
+
+            // Get CodeQL results
+            const results = await github.rest.codeScanning.listAlertsForRepo({
+              owner,
+              repo,
+              tool_name: 'CodeQL'
+            });
+
+            // Check for critical issues
+            const criticalIssues = results.data.filter(r => r.rule.severity === 'critical');
+
+            if (criticalIssues.length > 0) {
+              // Create security advisory
+              await github.rest.securityAdvisories.createRepositoryAdvisory({
+                owner,
+                repo,
+                summary: 'Critical security issues detected by CodeQL',
+                description: `CodeQL analysis detected ${criticalIssues.length} critical security issues that require immediate attention.`,
+                severity: 'critical',
+                vulnerabilities: criticalIssues.map(issue => ({
+                  package: {
+                    ecosystem: 'pip',
+                    name: 'c.l.a.r.a'
+                  },
+                  vulnerable_version_range: '<=1.0.0',
+                  patched_versions: '1.0.1'
+                }))
+              });
+            }
