@@ -1,0 +1,13 @@
+{
+    "name": "User",
+    "email": "",
+    "weather_location": "London",
+    "news_preferences": [
+        "technology",
+        "science"
+    ],
+    "voice_preferences": {
+        "rate": 150,
+        "volume": 1.0
+    }
+}

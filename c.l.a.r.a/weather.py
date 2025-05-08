@@ -1,61 +1,79 @@
 import requests
-from sayAndListen import speak
+import json
+import geocoder
 
 def get_weather(query):
-    # List of possible weather command phrases
-    weather_phrases = [
-        "what is the weather in",
-        "weather in",
-        "how's the weather in",
-        "tell me the weather in",
-        "what's the weather like in",
-        "give me the weather for",
-        "check weather in",
-        "what's the temperature in",
-        "how hot is it in",
-        "how cold is it in",
-        "is it raining in",
-        "is it sunny in",
-        "what's the forecast for",
-        "weather forecast for",
-        "temperature in",
-        "weather conditions in",
-        "current weather in",
-        "today's weather in",
-        "weather report for",
-        "weather update for",
-        "weather status in",
-        "weather details for",
-        "weather information for",
-        "weather data for",
-        "weather situation in"
-    ]
-    
-    # Extract city name by removing any of the weather phrases
-    city = query
-    for phrase in weather_phrases:
-        if phrase in query.lower():
-            city = query.lower().replace(phrase, "").strip()
-            break
-    
-    # You need to replace this with your actual API key from OpenWeatherMap
-    API_KEY = "e7768bbd20c31276e34dc57333e0c781"
-    
+    """Get weather information for a location"""
     try:
-        # Make API request
-        url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
-        response = requests.get(url)
+        # Extract location from query
+        query = query.lower()
+        location = None
+        
+        # Common weather-related phrases to remove
+        weather_phrases = [
+            "what is the weather",
+            "how's the weather",
+            "tell me the weather",
+            "what's the weather like",
+            "weather outside",
+            "weather today",
+            "current weather",
+            "weather right now",
+            "weather forecast",
+            "weather report",
+            "weather in",
+            "how is the weather"
+        ]
+        
+        # Remove weather-related phrases
+        for phrase in weather_phrases:
+            query = query.replace(phrase, "").strip()
+        
+        # If there's any remaining text, use it as location
+        if query:
+            location = query.strip()
+        
+        # If no location specified, get current city
+        if not location:
+            try:
+                # Get current location using IP geolocation
+                g = geocoder.ip('me')
+                if g.ok:
+                    location = g.city
+                    print(f"Using current city: {location}")
+                else:
+                    return "I couldn't detect your current location. Please specify a city name."
+            except Exception as e:
+                return "I couldn't detect your current location. Please specify a city name."
+            
+        # Get weather data from OpenWeatherMap API
+        api_key = "8e6a087ce7f01ae91d068390473d3dca"  # Replace with your OpenWeatherMap API key
+        base_url = "http://api.openweathermap.org/data/2.5/weather"
+        
+        params = {
+            "q": location,
+            "appid": api_key,
+            "units": "metric"
+        }
+        
+        response = requests.get(base_url, params=params)
         data = response.json()
         
         if response.status_code == 200:
-            temp = data['main']['temp']
-            weather_desc = data['weather'][0]['description']
-            humidity = data['main']['humidity']
+            weather = data["weather"][0]["description"]
+            temperature = data["main"]["temp"]
+            humidity = data["main"]["humidity"]
+            wind_speed = data["wind"]["speed"]
             
-            weather_info = f"The temperature in {city} is {temp}°C. Weather is {weather_desc}. Humidity is {humidity}%"
-            speak(weather_info)
+            weather_info = (
+                f"The weather in {location} is {weather}. "
+                f"Temperature is {temperature}°C, "
+                f"humidity is {humidity}%, "
+                f"and wind speed is {wind_speed} meters per second."
+            )
+            return weather_info
         else:
-            speak(f"Sorry, I couldn't find weather information for {city}")
+            return f"Sorry, I couldn't get weather information for {location}."
             
     except Exception as e:
-        speak("Sorry, I couldn't fetch the weather information at the moment")
+        return f"Error getting weather information: {str(e)}"

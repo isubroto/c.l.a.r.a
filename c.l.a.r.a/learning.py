@@ -4,9 +4,13 @@ from datetime import datetime
 import random
 from collections import defaultdict
 
-class JarvisLearning:
+class ClaraLearning:
     def __init__(self):
-        self.learning_file = "jarvis_learning.json"
+        self.learned_commands = {}
+        self.conversation_history = []
+        self.max_history = 100
+        self.learning_file = 'clara_learning.json'
+        self.load_learning()
         self.conversation_file = "jarvis_conversations.json"
         self.learned_responses = self._load_learned_responses()
         self.conversations = self._load_conversations()
@@ -23,6 +27,59 @@ class JarvisLearning:
             'proactivity': 0.5 # 0-1 scale, higher means more proactive
         }
         
+    def load_learning(self):
+        """Load learned commands from file"""
+        try:
+            if os.path.exists(self.learning_file):
+                with open(self.learning_file, 'r') as f:
+                    data = json.load(f)
+                    self.learned_commands = data.get('commands', {})
+                    self.conversation_history = data.get('history', [])
+        except Exception as e:
+            print(f"Error loading learning data: {e}")
+            self.learned_commands = {}
+            self.conversation_history = []
+    
+    def save_learning(self):
+        """Save learned commands to file"""
+        try:
+            data = {
+                'commands': self.learned_commands,
+                'history': self.conversation_history
+            }
+            with open(self.learning_file, 'w') as f:
+                json.dump(data, f, indent=4)
+        except Exception as e:
+            print(f"Error saving learning data: {e}")
+    
+    def learn_command(self, command, response):
+        """Learn a new command-response pair"""
+        self.learned_commands[command] = response
+        self.save_learning()
+    
+    def get_learned_response(self, command):
+        """Get a learned response for a command"""
+        return self.learned_commands.get(command)
+    
+    def store_conversation(self, user_input, response):
+        """Store conversation in history"""
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.conversation_history.append({
+            'timestamp': timestamp,
+            'user_input': user_input,
+            'response': response
+        })
+        
+        # Keep history within limit
+        if len(self.conversation_history) > self.max_history:
+            self.conversation_history = self.conversation_history[-self.max_history:]
+        
+        self.save_learning()
+    
+    def get_conversation_history(self):
+        """Get recent conversation history"""
+        return self.conversation_history[-10:]  # Return last 10 conversations
+    
     def _load_learned_responses(self):
         if os.path.exists(self.learning_file):
             try:
@@ -40,46 +97,6 @@ class JarvisLearning:
             except json.JSONDecodeError:
                 return []
         return []
-    
-    def _save_learned_responses(self):
-        with open(self.learning_file, 'w') as f:
-            json.dump(self.learned_responses, f, indent=4)
-    
-    def _save_conversations(self):
-        with open(self.conversation_file, 'w') as f:
-            json.dump(self.conversations, f, indent=4)
-    
-    def learn_command(self, query, response):
-        """Learn a new command-response pair"""
-        query = query.lower().strip()
-        if query not in self.learned_responses:
-            self.learned_responses[query] = {
-                'response': response,
-                'learned_at': datetime.now().isoformat(),
-                'usage_count': 1
-            }
-        else:
-            self.learned_responses[query]['usage_count'] += 1
-        self._save_learned_responses()
-    
-    def get_learned_response(self, query):
-        """Get a learned response for a query if it exists"""
-        query = query.lower().strip()
-        return self.learned_responses.get(query, {}).get('response')
-    
-    def store_conversation(self, query, response):
-        """Store a conversation for future learning"""
-        conversation = {
-            'query': query,
-            'response': response,
-            'timestamp': datetime.now().isoformat()
-        }
-        self.conversations.append(conversation)
-        self._save_conversations()
-    
-    def get_conversation_history(self, limit=10):
-        """Get recent conversation history"""
-        return self.conversations[-limit:]
     
     def analyze_conversation_patterns(self):
         """Analyze conversation patterns for learning opportunities"""

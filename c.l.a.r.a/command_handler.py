@@ -1,27 +1,27 @@
 from datetime import datetime
 from responses import ResponseGenerator
-from learning import JarvisLearning
+from learning import ClaraLearning
 from system_commands import SystemCommands
 
 class CommandHandler:
     def __init__(self):
         self.response_gen = ResponseGenerator()
-        self.jarvis_learning = JarvisLearning()
+        self.clara_learning = ClaraLearning()
         self.system_commands = SystemCommands()
         
         # Convert lists to sets for O(1) lookups
         self.wake_phrases = {
-            "wake up", "hey jarvis", "hello jarvis", "jarvis wake up",
-            "are you there", "are you awake", "wake up jarvis",
-            "start jarvis", "activate jarvis", "jarvis activate",
-            "jarvis start", "jarvis are you there", "jarvis are you awake"
+            "wake up", "hey clara", "hello clara", "clara wake up",
+            "are you there", "are you awake", "wake up clara",
+            "start clara", "activate clara", "clara activate",
+            "clara start", "clara are you there", "clara are you awake"
         }
         
         self.sleep_phrases = {
-            "go to sleep", "sleep now", "goodbye jarvis", "bye jarvis",
-            "jarvis sleep", "jarvis stop", "stop jarvis", "jarvis goodbye",
-            "jarvis bye", "deactivate jarvis", "jarvis deactivate",
-            "jarvis rest", "rest jarvis"
+            "go to sleep", "sleep now", "goodbye clara", "bye clara",
+            "clara sleep", "clara stop", "stop clara", "clara goodbye",
+            "clara bye", "deactivate clara", "clara deactivate",
+            "clara rest", "rest clara"
         }
         
         self.greeting_phrases = {
@@ -74,11 +74,16 @@ class CommandHandler:
         self.response_cache = {}
         self.cache_size = 100
         
+        self.wake_words = ["hey clara", "hello clara", "clara"]
+        self.sleep_words = ["goodbye clara", "sleep clara", "bye clara"]
+        
     def handle_wake_commands(self, query):
-        return any(phrase in query for phrase in self.wake_phrases)
+        """Check if the query contains a wake word"""
+        return any(word in query.lower() for word in self.wake_words)
     
     def handle_sleep_commands(self, query):
-        return any(phrase in query for phrase in self.sleep_phrases)
+        """Check if the query contains a sleep word"""
+        return any(word in query.lower() for word in self.sleep_words)
     
     def handle_greeting_commands(self, query):
         return any(phrase in query for phrase in self.greeting_phrases)
@@ -99,12 +104,85 @@ class CommandHandler:
         return any(phrase in query for phrase in self.news_phrases)
     
     def process_command(self, query):
+        """Process the command and return appropriate response"""
+        query = query.lower()
+        
+        # Temperature commands
+        temp_phrases = [
+            "what is the temperature in",
+            "temperature in",
+            "how hot is it in",
+            "how cold is it in",
+            "what's the temperature in",
+            "tell me the temperature in",
+            "current temperature in",
+            "today's temperature in",
+            "temperature today in",
+            "weather temperature in"
+        ]
+        if any(phrase in query for phrase in temp_phrases):
+            return "temperature", True
+            
+        # Weather commands
+        weather_phrases = [
+            "what is the weather in",
+            "weather in",
+            "how's the weather in",
+            "tell me the weather in",
+            "what's the weather like in"
+        ]
+        if any(phrase in query for phrase in weather_phrases):
+            return "weather", True
+            
+        # Search commands
+        search_phrases = [
+            "search for",
+            "search wikipedia for",
+            "search youtube for",
+            "search github for",
+            "search stack overflow for",
+            "search reddit for",
+            "search amazon for",
+            "search bing for",
+            "search yahoo for",
+            "search duckduckgo for",
+            "show search history",
+            "recent searches"
+        ]
+        if any(phrase in query for phrase in search_phrases):
+            return "search", True
+            
+        # News commands
+        news_phrases = [
+            "what is the news",
+            "tell me the news",
+            "latest news",
+            "current news",
+            "news update"
+        ]
+        if any(phrase in query for phrase in news_phrases):
+            return "news", True
+            
+        # Basic commands
+        if "hello" in query or "hi" in query:
+            return "Hello! How can I help you today?", False
+            
+        if "how are you" in query:
+            return "I'm doing well, thank you for asking! How can I assist you?", False
+            
+        if "what time is it" in query:
+            current_time = datetime.now().strftime("%I:%M %p")
+            return f"The current time is {current_time}", False
+            
+        if "what is your name" in query or "who are you" in query:
+            return "I am Clara, your personal assistant. I'm here to help you with various tasks.", False
+            
         # Check cache first
         if query in self.response_cache:
             return self.response_cache[query]
             
         # Check learned responses
-        learned_response = self.jarvis_learning.get_learned_response(query)
+        learned_response = self.clara_learning.get_learned_response(query)
         if learned_response:
             self._update_cache(query, (learned_response, True))
             return learned_response, True
@@ -118,19 +196,19 @@ class CommandHandler:
         # Process command
         if self.handle_sleep_commands(query):
             response = self.response_gen.get_sleep_response()
-            self.jarvis_learning.learn_command(query, response)
+            self.clara_learning.learn_command(query, response)
             self._update_cache(query, (response, True))
             return response, True
             
         elif self.handle_greeting_commands(query):
             response = self.response_gen.get_greeting_response()
-            self.jarvis_learning.learn_command(query, response)
+            self.clara_learning.learn_command(query, response)
             self._update_cache(query, (response, True))
             return response, True
             
         elif self.handle_name_commands(query):
             response = self.response_gen.get_name_response()
-            self.jarvis_learning.learn_command(query, response)
+            self.clara_learning.learn_command(query, response)
             self._update_cache(query, (response, True))
             return response, True
             
@@ -139,19 +217,19 @@ class CommandHandler:
             current_time = datetime.now()
             strTime = current_time.strftime("%I:%M %p")  # 12-hour format with AM/PM
             response = self.response_gen.get_time_response(strTime)
-            self.jarvis_learning.learn_command(query, response)
+            self.clara_learning.learn_command(query, response)
             self._update_cache(query, (response, True))
             return response, True
             
         elif self.handle_feeling_good_commands(query):
             response = self.response_gen.get_feeling_good_response()
-            self.jarvis_learning.learn_command(query, response)
+            self.clara_learning.learn_command(query, response)
             self._update_cache(query, (response, True))
             return response, True
             
         elif self.handle_feeling_bad_commands(query):
             response = self.response_gen.get_feeling_bad_response()
-            self.jarvis_learning.learn_command(query, response)
+            self.clara_learning.learn_command(query, response)
             self._update_cache(query, (response, True))
             return response, True
             
@@ -165,7 +243,7 @@ class CommandHandler:
             
         else:
             response = self.response_gen.get_unknown_command_response()
-            self.jarvis_learning.store_conversation(query, response)
+            self.clara_learning.store_conversation(query, response)
             self._update_cache(query, (response, False))
             return response, False
     

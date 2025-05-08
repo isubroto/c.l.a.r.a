@@ -1,12 +1,18 @@
-# Core dependencies (platform-independent)
-pyttsx3>=2.90
-SpeechRecognition>=3.10.0
-requests>=2.31.0
-python-dateutil>=2.8.2
-typing-extensions>=4.7.1
+# Core dependencies
+SpeechRecognition==3.10.0
+pyttsx3==2.90
+wikipedia==1.4.0
+requests==2.31.0
+beautifulsoup4==4.12.2
+python-dotenv==1.0.0
+geocoder==1.38.1
+
+# Additional utilities
+numpy==1.24.3
+python-dateutil==2.8.2
+pyaudio==0.2.13
 
 # Audio dependencies
-pyaudio>=0.2.13
 psutil>=5.9.5
 
 # Windows-specific dependencies

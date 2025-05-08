@@ -1,66 +1,93 @@
-# C.L.A.R.A - Conversational Learning AI Response Assistant
+# C.L.A.R.A - Command Line Assistant with Real-time Audio
 
-C.L.A.R.A is an advanced voice-controlled AI assistant built with Python that combines natural language processing, system control capabilities, and self-learning features. The assistant can understand and respond to voice commands, control system functions, provide weather updates, and learn from user interactions.
+A powerful command-line assistant that combines speech recognition, text-to-speech, and natural language processing to provide a seamless voice interaction experience.
 
 ## Features
 
-- 🎤 Voice Recognition and Response
-- 🌤️ Weather Information
-- 💻 System Control Commands
-- 📰 News Updates
-- 🧠 Self-Learning Capabilities
-- 🎯 Context-Aware Responses
-- 🔄 Response Caching
-- ⚡ Fast Command Processing
-- 🐳 Docker Support
-- 🔄 CI/CD Pipeline
-- 🪟 Windows Integration
-- 🐧 Linux Support
+- 🎤 Real-time speech recognition
+- 🔊 Text-to-speech capabilities
+- 🌤️ Weather information
+- 📰 News updates
+- 🎵 Music control
+- 📝 Note-taking
+- 🔍 Advanced Web Search
+  - Google search (default)
+  - Wikipedia search with summaries
+  - YouTube search
+  - DuckDuckGo search
+  - Bing search
+  - Yahoo search
+  - GitHub search
+  - Stack Overflow search
+  - Reddit search
+  - Amazon search
+- 📧 Email management
+- 🎮 System control
+- 🤖 AI-powered responses
+- 📚 Search history tracking
+- 🔄 Dynamic command processing
 
-## Prerequisites
+## Requirements
 
 - Python 3.13 or higher
-- Windows 10/11 (for full system control features)
-- Linux (for Docker deployment)
-- Microphone
-- Speakers
+- Windows 10/11 (for full functionality)
+- Microphone and speakers
+- Internet connection
 
 ## Installation
-
-### Local Installation
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/c.l.a.r.a.git
+git clone https://github.com/isubroto/c.l.a.r.a.git
 cd c.l.a.r.a
 ```
 
-2. Install required packages:
+2. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Run the assistant:
+## Usage
+
+1. Run the assistant:
 
 ```bash
 python c.l.a.r.a/Jarvis_main.py
 ```
 
-### Docker Installation
+2. Use wake words:
 
-1. Pull the Docker image:
+- "Hey Clara"
+- "Hello Clara"
+- "Clara"
 
-```bash
-docker pull ghcr.io/yourusername/clara:latest
-```
+3. Available commands:
 
-2. Run the container:
+### Search Commands
 
-```bash
-docker run -it --device /dev/snd ghcr.io/yourusername/clara:latest
-```
+- "Search for [query]" (Google)
+- "Search Wikipedia for [query]"
+- "Search YouTube for [query]"
+- "Search GitHub for [query]"
+- "Search Stack Overflow for [query]"
+- "Search Reddit for [query]"
+- "Search Amazon for [query]"
+- "Search Bing for [query]"
+- "Search Yahoo for [query]"
+- "Search DuckDuckGo for [query]"
+- "Show search history"
+- "Recent searches"
+
+### Other Commands
+
+- "What's the weather in [city]?"
+- "Tell me the news"
+- "Play music"
+- "Take a note"
+- "Send email"
+- "System status"
 
 ## Development
 
@@ -68,19 +95,14 @@ docker run -it --device /dev/snd ghcr.io/yourusername/clara:latest
 
 ```
 c.l.a.r.a/
-├── c.l.a.r.a/
-│   ├── Jarvis_main.py          # Main application file
-│   ├── command_handler.py      # Command processing logic
-│   ├── responses.py           # Response generation
-│   ├── learning.py           # Self-learning module
-│   ├── system_commands.py    # System control commands
-│   └── weather.py           # Weather information
-├── tests/                    # Test directory
-├── .github/
-│   └── workflows/           # GitHub Actions workflows
-├── Dockerfile               # Docker configuration
-├── requirements.txt        # Python dependencies
-└── README.md              # Project documentation
+├── Jarvis_main.py      # Main application entry
+├── command_handler.py  # Command processing
+├── responses.py        # Response generation
+├── learning.py         # Learning system
+├── weather.py          # Weather module
+├── sayAndListen.py     # Speech handling
+├── web_search.py       # Web search functionality
+└── tests/             # Test suite
 ```
 
 ### Running Tests
@@ -89,124 +111,57 @@ c.l.a.r.a/
 python -m unittest discover c.l.a.r.a/tests
 ```
 
-### CI/CD Pipeline
+### Development Dependencies
+
+Install development dependencies:
+
+```bash
+pip install -r requirements.txt[dev]
+```
+
+## Docker Support
+
+Build and run with Docker:
+
+```bash
+docker build -t isubroto/clara .
+docker run -it isubroto/clara
+```
+
+## CI/CD Pipeline
 
 The project uses GitHub Actions for continuous integration and deployment:
 
-- Windows Build and Test: Runs tests on Windows
-- Docker Build: Builds and pushes Docker images
-- Release: Creates GitHub releases with changelog
-
-## Available Commands
-
-### Basic Commands
-
-- **Greeting**: "Hello", "Hi", "Hey"
-- **Name**: "What is your name", "Who are you"
-- **Time**: "What time is it", "Tell me the time"
-- **Feelings**: "I am good", "I am not fine"
-- **Sleep**: "Go to sleep", "Sleep now", "Goodbye Jarvis"
-
-### Weather Commands
-
-- "What is the weather in [city]"
-- "Weather in [city]"
-- "How's the weather in [city]"
-- "Tell me the weather in [city]"
-- "What's the temperature in [city]"
-
-### System Commands (Windows Only)
-
-#### Power Management
-
-- "Shutdown computer"
-- "Restart computer"
-- "Sleep mode"
-- "Put computer to sleep"
-
-#### Volume Control
-
-- "Volume up"
-- "Volume down"
-- "Mute"
-- "Increase volume"
-- "Decrease volume"
-
-#### Display Control
-
-- "Brightness up"
-- "Brightness down"
-- "Increase brightness"
-- "Decrease brightness"
-
-#### System Information
-
-- "Battery status"
-- "System info"
-- "Disk space"
-- "Running processes"
-- "Network status"
-
-### News Commands
-
-- "What is the news"
-- "Tell me the news"
-- "Latest news"
-- "Current news"
-- "News update"
-
-## Configuration
-
-The assistant uses a `user_preferences.json` file to store user preferences. You can modify:
-
-- Default name
-- Email settings
-- Weather location
-- News preferences
-- Voice preferences (rate and volume)
+- Automated testing on Windows
+- Docker image building and publishing
+- Code quality checks
 
 ## Platform Support
 
-### Windows
-
-- Full system control features
-- Audio control
-- Display control
-- System information
-
-### Linux (Docker)
-
-- Basic voice commands
-- Weather information
-- News updates
-- Learning capabilities
+- Windows: Full support with all features
+- Linux: Basic functionality (limited system control)
+- macOS: Basic functionality (limited system control)
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## Author
+
+- isubroto
+
 ## Acknowledgments
 
-- pyttsx3 for text-to-speech conversion
-- speech_recognition for voice recognition
-- psutil for system information
-- pycaw for audio control
-- wmi for Windows Management Instrumentation
-- Docker for containerization
-- GitHub Actions for CI/CD
-
-## Support
-
-For support, please open an issue in the GitHub repository or contact the maintainers.
-
----
-
-Made with ❤️ by Subroto Saha
+- OpenAI for language models
+- Google for speech recognition
+- Microsoft for Windows integration
+- Wikipedia for knowledge base
+- Various search engines for web search capabilities
