@@ -10,7 +10,7 @@ on:
 
 jobs:
   sync-wiki:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     permissions:
       contents: write
       pages: write
@@ -27,16 +27,23 @@ jobs:
           python-version: "3.13"
 
       - name: Install dependencies
+        shell: pwsh
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Create wiki pages
+        shell: pwsh
         run: |
-          chmod +x create_wiki_pages.sh
-          ./create_wiki_pages.sh
+          # Convert Unix line endings to Windows
+          (Get-Content create_wiki_pages.sh) -replace "`n", "`r`n" | Set-Content create_wiki_pages.sh
+          # Make script executable
+          icacls create_wiki_pages.sh /grant Everyone:F
+          # Run the script
+          bash create_wiki_pages.sh
 
       - name: Push wiki changes
+        shell: pwsh
         run: |
           cd c.l.a.r.a.wiki
           git config --global user.name "GitHub Actions"
