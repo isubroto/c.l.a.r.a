@@ -1,38 +1,122 @@
-# C.L.A.R.A - Command Line Assistant with Real-time Audio
+# C.L.A.R.A - Your Personal Voice Assistant
 
-A powerful command-line assistant that combines speech recognition, text-to-speech, and natural language processing to provide a seamless voice interaction experience.
+C.L.A.R.A (Conversational Learning Assistant with Responsive Actions) is a powerful, modular voice assistant built in Python. It supports a wide range of features and can be easily extended with new capabilities.
 
 ## Features
 
-- 🎤 Real-time speech recognition
-- 🔊 Text-to-speech capabilities
-- 🌤️ Weather information
-- 📰 News updates
-- 🎵 Music control
-- 📝 Note-taking
-- 🔍 Advanced Web Search
-  - Google search (default)
-  - Wikipedia search with summaries
-  - YouTube search
-  - DuckDuckGo search
-  - Bing search
-  - Yahoo search
-  - GitHub search
-  - Stack Overflow search
-  - Reddit search
-  - Amazon search
-- 📧 Email management
-- 🎮 System control
-- 🤖 AI-powered responses
-- 📚 Search history tracking
-- 🔄 Dynamic command processing
+### Core Features
 
-## Requirements
+- Voice interaction with wake word detection ("Hey Clara")
+- Natural language command processing
+- Cross-platform support (Windows, Linux, macOS)
+- Self-learning capabilities
+- User preference management
+- Conversation history tracking
+- Emotional intelligence and personality adaptation
 
-- Python 3.13 or higher
-- Windows 10/11 (for full functionality)
-- Microphone and speakers
-- Internet connection
+### Communication & Social
+
+- WhatsApp integration
+  - Send messages
+  - Make calls
+  - Contact management
+- Email management
+- Web search across multiple engines
+  - Google
+  - Wikipedia
+  - YouTube
+  - DuckDuckGo
+  - Bing
+  - Yahoo
+  - GitHub
+  - Stack Overflow
+  - Reddit
+  - Amazon
+
+### Productivity & Organization
+
+- Schedule Management
+  - Add/remove schedules
+  - Daily reminders
+  - Recurring tasks
+- Focus Mode
+  - Productivity tracking
+  - Distraction blocking
+  - Session management
+- App Launcher
+  - Quick app access
+  - Custom app configurations
+  - Cross-platform support
+- Password Management
+  - Secure password storage
+  - Master password protection
+  - Service-specific passwords
+
+### Entertainment & Media
+
+- YouTube Controls
+  - Play/pause
+  - Search videos
+  - Volume control
+  - Fullscreen toggle
+- Playlist Management
+  - Create playlists
+  - Add/remove songs
+  - Play playlist
+- Rock Paper Scissors Game
+  - Score tracking
+  - Multiple rounds
+  - Statistics
+
+### System & Utilities
+
+- System Control
+  - Shutdown/restart
+  - Sleep/hibernate
+  - System information
+- Screenshot & Camera
+  - Screen capture
+  - Photo capture
+  - Automatic file organization
+- Internet Speed Test
+  - Download speed
+  - Upload speed
+  - Ping measurement
+- Language Translation
+  - Multiple languages
+  - Text translation
+  - Language detection
+- Calculator
+  - Basic arithmetic
+  - Complex calculations
+  - Natural language processing
+
+### Information & Updates
+
+- Weather Information
+  - Current conditions
+  - Forecast
+  - Location-based
+- News Updates
+  - Latest headlines
+  - Category-specific news
+  - Source selection
+- IPL Live Scores
+  - Match updates
+  - Team scores
+  - Match status
+
+### Memory & Learning
+
+- Remember System
+  - Store information
+  - Recall details
+  - Context-aware memory
+- Learning System
+  - Command pattern recognition
+  - User preference learning
+  - Response optimization
+  - Emotional adaptation
 
 ## Installation
 
@@ -43,112 +127,128 @@ git clone https://github.com/isubroto/c.l.a.r.a.git
 cd c.l.a.r.a
 ```
 
-2. Install dependencies:
+2. Create and activate a virtual environment:
+
+```bash
+# Windows
+python -m venv venv
+.\venv\Scripts\activate
+
+# Linux/macOS
+python3 -m venv venv
+source venv/bin/activate
+```
+
+3. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Usage
+4. Install platform-specific dependencies:
 
-1. Run the assistant:
+- Windows: No additional steps required
+- Linux: Install PortAudio and espeak
 
 ```bash
-python c.l.a.r.a/Jarvis_main.py
+sudo apt-get install portaudio19-dev espeak
 ```
 
-2. Use wake words:
+## Usage
 
-- "Hey Clara"
-- "Hello Clara"
-- "Clara"
+1. Start C.L.A.R.A:
+
+```bash
+python clara_main.py
+```
+
+2. Use the wake word "Hey Clara" to activate the assistant
 
 3. Available commands:
 
-### Search Commands
+- "What's the weather like?"
+- "Set an alarm for 7 AM"
+- "Open YouTube"
+- "Translate hello to Spanish"
+- "Take a screenshot"
+- "What's the time?"
+- "Search for Python tutorials"
+- "Play rock paper scissors"
+- "Check IPL scores"
+- "Start focus mode"
+- "Send WhatsApp message to John"
+- "Create a playlist called workout"
+- "Calculate 25 times 13"
+- "Test internet speed"
+- "Show system information"
+- "Remember that my favorite color is blue"
+- And many more!
 
-- "Search for [query]" (Google)
-- "Search Wikipedia for [query]"
-- "Search YouTube for [query]"
-- "Search GitHub for [query]"
-- "Search Stack Overflow for [query]"
-- "Search Reddit for [query]"
-- "Search Amazon for [query]"
-- "Search Bing for [query]"
-- "Search Yahoo for [query]"
-- "Search DuckDuckGo for [query]"
-- "Show search history"
-- "Recent searches"
+## Configuration
 
-### Other Commands
+Configuration files are stored in JSON format:
 
-- "What's the weather in [city]?"
-- "Tell me the news"
-- "Play music"
-- "Take a note"
-- "Send email"
-- "System status"
+- `user_preferences.json`: User preferences and settings
+- `apps.json`: App launcher configurations
+- `passwords.json`: Password manager data
+- `schedule.json`: Schedule and reminder data
+- `playlists.json`: Music playlist data
+- `learning_data.json`: Learning system data
+- `memory.json`: Remember system data
 
 ## Development
 
-### Project Structure
+To contribute to the project:
 
-```
-c.l.a.r.a/
-├── Jarvis_main.py      # Main application entry
-├── command_handler.py  # Command processing
-├── responses.py        # Response generation
-├── learning.py         # Learning system
-├── weather.py          # Weather module
-├── sayAndListen.py     # Speech handling
-├── web_search.py       # Web search functionality
-└── tests/             # Test suite
-```
-
-### Running Tests
-
-```bash
-python -m unittest discover c.l.a.r.a/tests
-```
-
-### Development Dependencies
-
-Install development dependencies:
+1. Install development dependencies:
 
 ```bash
 pip install -r requirements.txt[dev]
 ```
 
-## Docker Support
-
-Build and run with Docker:
+2. Run tests:
 
 ```bash
-docker build -t isubroto/clara .
-docker run -it isubroto/clara
+pytest
 ```
 
-## CI/CD Pipeline
+3. Check code style:
 
-The project uses GitHub Actions for continuous integration and deployment:
+```bash
+flake8
+black .
+mypy .
+```
 
-- Automated testing on Windows
-- Docker image building and publishing
-- Code quality checks
+## Project Structure
 
-## Platform Support
-
-- Windows: Full support with all features
-- Linux: Basic functionality (limited system control)
-- macOS: Basic functionality (limited system control)
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+```
+c.l.a.r.a/
+├── clara_main.py          # Main application file
+├── command_handler.py     # Command processing
+├── responses.py          # Response generation
+├── learning.py          # Learning system
+├── weather.py           # Weather information
+├── temperature.py       # Temperature conversion
+├── web_search.py        # Web search functionality
+├── sayAndListen.py      # Speech interface
+├── hotword_detector.py  # Wake word detection
+├── alarm.py            # Alarm management
+├── youtube_controls.py  # YouTube integration
+├── remember.py         # Memory system
+├── playlist.py         # Playlist management
+├── calculator.py       # Calculator functionality
+├── whatsapp.py         # WhatsApp integration
+├── system_control.py   # System controls
+├── password_protection.py # Password management
+├── schedule.py         # Schedule management
+├── app_launcher.py     # App launcher
+├── speed_test.py       # Internet speed test
+├── ipl_score.py        # IPL score updates
+├── rock_paper_scissors.py # Game implementation
+├── screenshot_camera.py # Screenshot and camera
+└── translator.py       # Language translation
+```
 
 ## License
 
@@ -156,12 +256,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Author
 
-- isubroto
+- GitHub: [isubroto](https://github.com/isubroto)
 
 ## Acknowledgments
 
-- OpenAI for language models
-- Google for speech recognition
-- Microsoft for Windows integration
-- Wikipedia for knowledge base
-- Various search engines for web search capabilities
+- Thanks to all contributors and users of C.L.A.R.A
+- Built with Python and various open-source libraries
+- Inspired by modern voice assistants and AI technology
